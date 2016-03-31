@@ -11,37 +11,46 @@ swift command line for creating @2x @3x .png
 
 import Foundation
 
-func resizeFile( originFile : String,fileSuffix : String, size : Float)  {
+func resizeFile( originFile : String,fileSuffix : String, width : Float,height : Float)  {
     let range = originFile.rangeOfString(".png")
     guard range != nil && (range?.startIndex != range?.endIndex) else
     {
         return
     }
-    var fileName2 = String.init(originFile)
-    fileName2.insertContentsOf(fileSuffix.characters, at: (range?.startIndex)!)
-    print("fileName****:%@",fileName2)
+    var nFileName = String.init(originFile)
+    nFileName.insertContentsOf(fileSuffix.characters, at: (range?.startIndex)!)
+    print("fileName****:%@",nFileName)
     
     
-    let cpFileCmd = "cp \(originFile) \(fileName2)"
+    let cpFileCmd = "cp \(originFile) \(nFileName)"
     print(cpFileCmd)
     system(cpFileCmd)
     
-    let sizp = "sips -Z \(size) \(fileName2)"
+    let sizp = "sips -z \(width) \(height) \(nFileName)"
+//    let sizp = "sips -Z \(width) \(fileName2)"
     system(sizp)
     print(sizp)
     
 }
 
+func getImageSize(imagePath : String) -> CGSize {
+    print(imagePath)
+   return PngHelper.getPNGSize(imagePath)
+}
+
+//func getFileSize(filename : String) ->CGSize
+//{
+//    
+//    return CGSizeZero
+//}
+
 let arguments = Process.arguments
-if arguments.count > 2
+if arguments.count > 1
 {
     print("hello")
     let  dirPath = arguments[1]
-    //Assume the fileSize is the minimun piex width size of the files
-    let fileSize : Float! = Float (arguments[2])
-    print("hello:\(fileSize)" + dirPath)
     let fmg = NSFileManager.defaultManager()
-    var childArray:Array = [String]();
+    var childArray = [String]();
     do
     {
         childArray = try fmg.contentsOfDirectoryAtPath(dirPath)
@@ -63,23 +72,31 @@ if arguments.count > 2
         
         for i in 0..<childArray.count
         {
-            let originFilePath = dirPath + "/" + childArray[i]
-            if originFilePath.containsString("@2x") || originFilePath.containsString("@3x")
+            let imageName = childArray[i]
+            if imageName.containsString("@2x") || imageName.containsString("@3x") || (!imageName.hasSuffix(".png"))
             {
-                
+                //should do nothing
             }
             else
             {
-                //cp file to destination path
-                let destResizeFilePath = destFilePath + "/" + childArray[i]
-                system("cp \(originFilePath) \(destResizeFilePath)")
                 
-                //@2x.png
-                resizeFile(destResizeFilePath, fileSuffix: "@2x", size: fileSize * 2);
-                //@3x.png
-                resizeFile(destResizeFilePath, fileSuffix: "@3x", size: fileSize * 3);
-                //.png
-                resizeFile(destResizeFilePath, fileSuffix: "", size: fileSize);
+                let originFilePath = dirPath + "/" + imageName
+                let imageSize = PngHelper.getPNGSize(originFilePath)
+                if !(imageSize.width <= 0 || imageSize.height <= 0)
+                {
+                    let destResizeFilePath = destFilePath + "/" + imageName
+                    //cp file to destination path
+                    system("cp \(originFilePath) \(destResizeFilePath)")
+                    
+                    //@2x.png
+                    resizeFile(destResizeFilePath, fileSuffix: "@2x", width:Float(imageSize.width) * 2.0 / 3.0, height:Float( imageSize.height) * 2.0 / 3.0)
+                    
+                    //@3x.png
+                    resizeFile(destResizeFilePath, fileSuffix: "@3x", width:Float( imageSize.width), height:Float( imageSize.height))
+                    //.png
+                   resizeFile(destResizeFilePath, fileSuffix: "", width:Float( imageSize.width)  / 3.0, height:Float( imageSize.height)  / 3.0)
+                }
+               
             }
             
         }
@@ -89,5 +106,9 @@ if arguments.count > 2
         print("catches no files at \(dirPath)!pls check it.")
     }
 }
+
+
+
+
 
 
