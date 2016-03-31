@@ -35,11 +35,6 @@ func getImageSize(imagePath : String) -> CGSize {
    return PngHelper.getPNGSize(imagePath)
 }
 
-//func getFileSize(filename : String) ->CGSize
-//{
-//    
-//    return CGSizeZero
-//}
 
 let arguments = Process.arguments
 if arguments.count > 1
@@ -60,7 +55,7 @@ if arguments.count > 1
     
     if(childArray.count > 0)
     {
-        print("cNumber files at \(dirPath):\(childArray.count)")
+        print("Number of files at \(dirPath):\(childArray.count)")
         let dfmt = NSDateFormatter.init()
         dfmt.dateFormat = "yyyyMMdd_HH:mm:ss"
         let now = dfmt.stringFromDate(NSDate())
@@ -100,7 +95,7 @@ if arguments.count > 1
         
     }else
     {
-        print("catches no files at \(dirPath)!pls check it.")
+        print("Error:Catches no files at \(dirPath)!pls check it.")
     }
 }
 
