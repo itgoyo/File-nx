@@ -22,8 +22,11 @@ func resizeFile( originFile : String,fileSuffix : String, width : Float,height :
     let cpFileCmd = "cp \(originFile) \(nFileName)"
     print(cpFileCmd)
     system(cpFileCmd)
-    
-    let sizp = "sips -z \(width) \(height) \(nFileName)"
+   /* -z pixelsH pixelsW
+    --resampleHeightWidth pixelsH pixelsW
+    Resample image at specified size. Image apsect ratio may be
+    altered.*/
+    let sizp = "sips -z \(height) \(width) \(nFileName)"
 //    let sizp = "sips -Z \(width) \(fileName2)"
     system(sizp)
     print(sizp)
@@ -65,6 +68,7 @@ if arguments.count > 1
         for i in 0..<childArray.count
         {
             let imageName = childArray[i]
+            
             if imageName.containsString("@2x") || imageName.containsString("@3x") || (!imageName.hasSuffix(".png"))
             {
                 //should do nothing
@@ -73,7 +77,7 @@ if arguments.count > 1
             {
                 
                 let originFilePath = dirPath + "/" + imageName
-                let imageSize = PngHelper.getPNGSize(originFilePath)
+                let imageSize = getImageSize(originFilePath)
                 if !(imageSize.width <= 0 || imageSize.height <= 0)
                 {
                     let destResizeFilePath = destFilePath + "/" + imageName
