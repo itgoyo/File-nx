@@ -25,8 +25,11 @@ func resizeFile( originFile : String,fileSuffix : String, width : Float,height :
     let cpFileCmd = "cp \(originFile) \(nFileName)"
     print(cpFileCmd)
     system(cpFileCmd)
-    
-    let sizp = "sips -z \(width) \(height) \(nFileName)"
+   /* -z pixelsH pixelsW
+    --resampleHeightWidth pixelsH pixelsW
+    Resample image at specified size. Image apsect ratio may be
+    altered.*/
+    let sizp = "sips -z \(height) \(width) \(nFileName)"
 //    let sizp = "sips -Z \(width) \(fileName2)"
     system(sizp)
     print(sizp)
@@ -38,11 +41,6 @@ func getImageSize(imagePath : String) -> CGSize {
    return PngHelper.getPNGSize(imagePath)
 }
 
-//func getFileSize(filename : String) ->CGSize
-//{
-//    
-//    return CGSizeZero
-//}
 
 let arguments = Process.arguments
 if arguments.count > 1
@@ -63,7 +61,7 @@ if arguments.count > 1
     
     if(childArray.count > 0)
     {
-        print("cNumber files at \(dirPath):\(childArray.count)")
+        print("Number of files at \(dirPath):\(childArray.count)")
         let dfmt = NSDateFormatter.init()
         dfmt.dateFormat = "yyyyMMdd_HH:mm:ss"
         let now = dfmt.stringFromDate(NSDate())
@@ -73,6 +71,7 @@ if arguments.count > 1
         for i in 0..<childArray.count
         {
             let imageName = childArray[i]
+            
             if imageName.containsString("@2x") || imageName.containsString("@3x") || (!imageName.hasSuffix(".png"))
             {
                 //should do nothing
@@ -81,7 +80,7 @@ if arguments.count > 1
             {
                 
                 let originFilePath = dirPath + "/" + imageName
-                let imageSize = PngHelper.getPNGSize(originFilePath)
+                let imageSize = getImageSize(originFilePath)
                 if !(imageSize.width <= 0 || imageSize.height <= 0)
                 {
                     let destResizeFilePath = destFilePath + "/" + imageName
@@ -103,9 +102,12 @@ if arguments.count > 1
         
     }else
     {
-        print("catches no files at \(dirPath)!pls check it.")
+        print("Error:Catches no files at \(dirPath)!pls check it.")
     }
 }
+
+
+
 
 
 
