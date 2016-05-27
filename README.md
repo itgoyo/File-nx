@@ -1,6 +1,7 @@
 # File-nx
-![image](https://github.com/abredo/File-nx/blob/master/tips.gif) 
 swift command line for creating @2x @3x .png used in iOS Apps.
+![image](https://github.com/abredo/File-nx/blob/master/tips.gif) 
+
 ```swift
 //
 //  main.swift
