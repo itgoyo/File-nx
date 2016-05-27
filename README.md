@@ -74,7 +74,7 @@ if arguments.count > 1
             
             if imageName.containsString("@2x") || imageName.containsString("@3x") || (!imageName.hasSuffix(".png"))
             {
-                //should do nothing
+                //if the file is not a png , or it's already an @2x/@3x png file,should do nothing
             }
             else
             {
